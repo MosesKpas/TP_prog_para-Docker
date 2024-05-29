@@ -1,0 +1,26 @@
+version: '3.1'
+
+services:
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'djangodb'  # nom de votre base de données
+      MYSQL_USER: 'admin'  # votre nom d'utilisateur
+      MYSQL_PASSWORD: 'root'  # votre mot de passe
+      MYSQL_ROOT_PASSWORD: 'root'  # mot de passe root
+    ports:
+      - '3306:3306'  # port par défaut pour MySQL
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  web:
+    build: .
+    command: sh -c "python manage.py migrate --no-input && python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - '8000:8000'  # port par défaut pour votre application Django
+    depends_on:
+      - db
+
+volumes:
+  mysql_data:
